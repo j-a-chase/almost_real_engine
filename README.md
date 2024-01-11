@@ -1,7 +1,7 @@
 # Almost-Real Engine
 ## Team Members
 * Sean Reading
-* Reed Hemsley
+* Reid Hemsley
 * James Chase
 * Minkee Yoon
 
