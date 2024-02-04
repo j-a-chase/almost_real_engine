@@ -1,4 +1,6 @@
 #pragma once
+#ifndef WINDOW
+#define WINDOW
 
 class Window {
 public:
@@ -7,3 +9,5 @@ public:
     bool release();
     ~Window();
 };
+
+#endif
