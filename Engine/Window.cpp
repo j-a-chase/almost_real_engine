@@ -1,6 +1,6 @@
 #include "Window.h"
 
-#include <includes/glfw3.h>
+#include "../includes/glfw3.h"
 
 Window::Window() {
     this->init();
