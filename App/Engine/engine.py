@@ -37,6 +37,9 @@ class Engine():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.close_game()
+            
+            self.window.draw_prism()
+            pygame.time.wait(10)
 
     def close_game(self) -> None:
         '''
