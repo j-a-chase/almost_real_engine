@@ -7,6 +7,9 @@
 #
 ################################################################################
 
+# imports
+from Engine.engine import Engine
+
 def main() -> None:
     '''
     Main Function
@@ -15,5 +18,7 @@ def main() -> None:
 
     Returns: None
     '''
+    game = Engine()
+    game.run()
 
 if __name__ == "__main__": main()
