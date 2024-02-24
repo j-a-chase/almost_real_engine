@@ -23,23 +23,40 @@ class Window():
             - caption: string defaulting to 'New Pygame Application'
         '''
         pygame.init()
-
         pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEBUF)
         pygame.display.set_caption(caption)
 
-        glClearColor(0.0, 0.0, 0.0, 1.0)
-        
-        glEnable(GL_DEPTH_TEST)
+        self.width = width
+        self.height = height
         
         self.angle = 0.0
-        
+
+        self.__setup()
+
+    def __setup(self) -> None:
+        '''
+        OpenGL setup function
+
+        Parameters: None
+
+        Returns: None
+        '''
+        glClearColor(0.0, 0.0, 0.0, 1.0)
+        glEnable(GL_DEPTH_TEST)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(45, (width / height), 0.1, 10.0)
+        gluPerspective(45, (self.width / self.height), 0.1, 10.0)
         glTranslatef(0.0, 0.0, -3.0)  # Move back so we can see the prism
         glMatrixMode(GL_MODELVIEW)
 
-    def draw_prism(self):
+    def draw_prism(self) -> None:
+        '''
+        Draws a rotating prism on the screen
+
+        Parameters: None
+
+        Returns: None
+        '''
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glLoadIdentity()
