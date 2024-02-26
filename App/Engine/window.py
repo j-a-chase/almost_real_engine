@@ -62,7 +62,9 @@ class Window():
         glLoadIdentity()
         glRotatef(self.angle, 0.0, 1.0, 0.2)
 
+        # generate triangles
         glBegin(GL_TRIANGLES)
+
         # Front face
         glColor3f(1.0, 0.0, 0.0)
         glVertex3f(0.0, 0.5, 0.0)
@@ -96,7 +98,9 @@ class Window():
         glVertex3f(-0.5, -0.5, 0.5)
         glEnd()
 
+        # generate bottom square
         glBegin(GL_QUADS)
+
         # Bottom face
         glColor3f(0.0, 1.0, 0.0)
         glVertex3f(-0.5, -0.5, 0.5)
