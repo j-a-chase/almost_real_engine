@@ -24,7 +24,7 @@ class Engine():
         '''
         self.window = None
 
-    def run(self) -> None:
+    def run(self, width: int=800, height: int=600, caption: str="New Pygame Application") -> None:
         '''
         Runs the engine.
 
@@ -32,7 +32,7 @@ class Engine():
 
         Returns: None
         '''
-        self.window = Window()
+        self.window = Window(width=width, height=height, caption=caption)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
