@@ -28,8 +28,6 @@ class Window():
 
         self.width = width
         self.height = height
-        
-        self.angle = 0.0
 
         self.__setup()
 
@@ -48,74 +46,6 @@ class Window():
         gluPerspective(45, (self.width / self.height), 0.1, 10.0)
         glTranslatef(0.0, 0.0, -3.0)  # Move back so we can see the prism
         glMatrixMode(GL_MODELVIEW)
-
-    def draw_prism(self) -> None:
-        '''
-        Draws a rotating prism on the screen
-
-        Parameters: None
-
-        Returns: None
-        '''
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-        glLoadIdentity()
-        glRotatef(self.angle, 0.0, 1.0, 0.2)
-
-        # generate triangles
-        glBegin(GL_TRIANGLES)
-
-        # Front face
-        glColor3f(1.0, 0.0, 0.0)
-        glVertex3f(0.0, 0.5, 0.0)
-        glColor3f(0.0, 1.0, 0.0)
-        glVertex3f(-0.5, -0.5, 0.5)
-        glColor3f(0.0, 0.0, 1.0)
-        glVertex3f(0.5, -0.5, 0.5)
-
-        # Right face
-        glColor3f(1.0, 1.0, 0.0)
-        glVertex3f(0.0, 0.5, 0.0)
-        glColor3f(0.0, 0.0, 1.0)
-        glVertex3f(0.5, -0.5, 0.5)
-        glColor3f(0.0, 1.0, 0.0)
-        glVertex3f(0.5, -0.5, -0.5)
-
-        # Back face
-        glColor3f(1.0, 0.0, 1.0)
-        glVertex3f(0.0, 0.5, 0.0)
-        glColor3f(0.0, 1.0, 0.0)
-        glVertex3f(0.5, -0.5, -0.5)
-        glColor3f(0.0, 0.0, 1.0)
-        glVertex3f(-0.5, -0.5, -0.5)
-
-        # Left face
-        glColor3f(1.0, 1.0, 1.0)
-        glVertex3f(0.0, 0.5, 0.0)
-        glColor3f(0.0, 0.0, 1.0)
-        glVertex3f(-0.5, -0.5, -0.5)
-        glColor3f(0.0, 1.0, 0.0)
-        glVertex3f(-0.5, -0.5, 0.5)
-        glEnd()
-
-        # generate bottom square
-        glBegin(GL_QUADS)
-
-        # Bottom face
-        glColor3f(0.0, 1.0, 0.0)
-        glVertex3f(-0.5, -0.5, 0.5)
-        glColor3f(0.0, 0.0, 1.0)
-        glVertex3f(0.5, -0.5, 0.5)
-        glColor3f(1.0, 0.0, 0.0)
-        glVertex3f(0.5, -0.5, -0.5)
-        glColor3f(0.0, 1.0, 1.0)
-        glVertex3f(-0.5, -0.5, -0.5)
-        glEnd()
-
-        pygame.display.flip()
-
-        self.angle += 1.0
-
 
 if __name__ == '__main__':
     assert False, 'This is a class file. Import its contents into another file.'
