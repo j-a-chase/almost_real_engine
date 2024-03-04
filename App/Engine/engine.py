@@ -36,7 +36,8 @@ class Engine():
         '''
         self.window = Window(width=width, height=height, caption=caption)
         angle = 30.0
-        self.draw_pyramid(angle=angle)
+        self.draw_pyramid(angle, 1.0)
+        self.draw_pyramid(angle, 0.5)
 
         while True:
             for event in pygame.event.get():
@@ -56,18 +57,21 @@ class Engine():
         exit()
 
     
-    def draw_pyramid(self, angle=0.0) -> None:
+    def draw_pyramid(self, angle: float = 0.0, axis_x: float = 0.0, axis_y: float = 0.0, axis_z: float = 0.0) -> None:
         '''
         Draws a rotating prism on the screen
 
-        Parameters: None
+        Parameters:
+            - angle: the angle of rotation
+            - axis_x, axis_y, axis_z: three float values to determine the axis the angle will be applied to.
+                Effectively draws a line from (0.0, 0.0, 0.0) to the provided point to create the axis of rotation.
 
         Returns: None
         '''
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glLoadIdentity()
-        glRotatef(angle, 0.0, 1.0, 0.2)
+        glRotatef(angle, axis_x, axis_y, axis_z)
 
         # generate triangles
         glBegin(GL_TRIANGLES)
