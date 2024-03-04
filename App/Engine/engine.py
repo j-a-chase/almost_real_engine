@@ -38,7 +38,6 @@ class Engine():
         self.lastX, self.lastY = 400, 300
         self.first_mouse = True
         pygame.mouse.set_visible(False)
-        pygame.event.set_grab(True)
         
         self.room_size = [50, 10, 50]
         self.physics = Physics(self.room_size)
@@ -54,15 +53,19 @@ class Engine():
         '''
         self.window = Window(width=width, height=height, caption=caption)
         pygame.mouse.set_pos((self.lastX, self.lastY))
+        pygame.event.set_grab(True)
 
-        room_width = 50
-        room_height = 10
-        room_length = 50
+        room_width = self.room_size[0]
+        room_height = self.room_size[1]
+        room_length = self.room_size[2]
         
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.close_game()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:  # Check if ESC key is pressed
+                        self.close_game()  # Call close_game to exit
                 if event.type == pygame.MOUSEMOTION:
                     self.handle_mouse_movement(*event.rel)
                     
