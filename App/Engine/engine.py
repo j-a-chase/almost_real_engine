@@ -32,24 +32,27 @@ class Engine():
 
         self.window = None
 
+        # Initialize camera position, front direction, and up direction
         self.camera_pos = (0.0, 0.0, 5.0)
         self.camera_front = (0.0, 0.0, -1.0)
         self.camera_up = (0.0, 1.0, 0.0)
 
-        # yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a
-        # direction vector pointing to the right
+        # Initialize camera angles and mouse position
         self.yaw = -90.0
-
         self.pitch = 0.0
         self.lastX = 400
         self.lastY = 300
         self.first_mouse = True
 
+        # Hide the mouse cursor
         pygame.mouse.set_visible(False)
         
+        # Initialize physics
         self.room_size = (50, 10, 50)
         self.physics = Physics(self.room_size)
 
+
+    # Method to run the engine
     def run(self, width: int=800, height: int=600, 
             caption: str="New Pygame Application") -> None:
         '''
@@ -59,12 +62,18 @@ class Engine():
 
         Returns: None
         '''
+        # Create a window
         self.window = Window(width=width, height=height, caption=caption)
+        
+        # Set the mouse position to the center of the window
         pygame.mouse.set_pos((self.lastX, self.lastY))
+        # Lock the mouse to the window
         pygame.event.set_grab(True)
 
+        # Set the camera position to the center of the room
         room_width, room_height, room_length = self.room_size
         
+        # Main game loop
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -73,13 +82,18 @@ class Engine():
                     # Check if ESC key is pressed
                     if event.key == pygame.K_ESCAPE:
                         # Call close_game to exit
-                        self.close_game()
+                        self.close_game()\
+                # Check for mouse movement
                 if event.type == pygame.MOUSEMOTION:
                     self.handle_mouse_movement(*event.rel)
                     
+            # Handle input
             self.handle_input()
+            
+            # Draw the room
             self.draw_room(room_width, room_height, room_length)
 
+    # Method to close the game
     def close_game(self) -> None:
         '''
         Handles events that cause the game to close
@@ -91,8 +105,12 @@ class Engine():
         pygame.quit()
         exit()
 
+    # Method to handle input
     def handle_input(self) -> None:
+        # Get the keys that are currently pressed
         keys = pygame.key.get_pressed()
+        
+        # Set the camera speed
         camera_speed = 0.005
 
         # Copy of the camera position for testing potential movement
@@ -112,7 +130,7 @@ class Engine():
                 self.camera_front[2] * self.camera_up[0] - self.camera_front[0] * self.camera_up[2],
                 self.camera_front[0] * self.camera_up[1] - self.camera_front[1] * self.camera_up[0]
             )
-
+            # Normalize the right vector
             norm = math.sqrt(sum(i**2 for i in cross_product))
             right = tuple(i / norm for i in cross_product)
 
@@ -128,32 +146,39 @@ class Engine():
         if not self.physics.check_collision(new_pos):
             self.camera_pos = tuple(new_pos)
 
-            
+    # Method to handle mouse movement        
     def handle_mouse_movement(self, xoffset, yoffset, sensitivity=0.05):
+            # If this is the first mouse movement, set the last position to the current position
             if self.first_mouse:
                 self.lastX, self.lastY = pygame.mouse.get_pos()
                 self.first_mouse = False
 
+            # Calculate the offset of the mouse position
             xoffset *= sensitivity
             yoffset *= sensitivity * -1
 
+            # Update the last position
             self.yaw += xoffset
             self.pitch += yoffset
 
+            # Constrain the pitch
             if self.pitch > 89.0:
                 self.pitch = 89.0
             elif self.pitch < -89.0:
                 self.pitch = -89.0
 
+            # Update the camera front direction
             direction = (
                 math.cos(math.radians(self.yaw)) * math.cos(math.radians(self.pitch)),
                 math.sin(math.radians(self.pitch)),
                 math.sin(math.radians(self.yaw)) * math.cos(math.radians(self.pitch))
             )
 
+            # Normalize the direction
             norm = math.sqrt(sum(i**2 for i in direction))
             self.camera_front = tuple(i / norm for i in direction)
 
+    # Method to draw the room
     def draw_room(self, width: float, height: float, length: float) -> None:
         '''
         Draws a room on the screen
@@ -165,11 +190,15 @@ class Engine():
 
         Returns: None
         '''
+        # Enable depth testing
         glEnable(GL_DEPTH_TEST)
+        # Clear buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
+        # Set perspective
         gluPerspective(45, (self.window.width / self.window.height), 0.1, 100.0)
 
+        # Set the camera position and direction
         eye = tuple(self.camera_pos[i] + self.camera_front[i] for i in range(3))
         gluLookAt(self.camera_pos[0], self.camera_pos[1], self.camera_pos[2],
                   eye[0], eye[1], eye[2],

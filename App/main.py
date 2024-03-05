@@ -18,6 +18,7 @@ def main() -> None:
 
     Returns: None
     '''
+    # Create an instance of the Engine class
     game = Engine()
     game.run()
 
