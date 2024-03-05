@@ -51,14 +51,18 @@ class Engine():
         self.room_size = (50, 10, 50)
         self.physics = Physics(self.room_size)
 
-
-    # Method to run the engine
     def run(self, width: int=800, height: int=600, 
             caption: str="New Pygame Application") -> None:
         '''
         Runs the engine.
 
-        Parameters: None
+        Parameters:
+            - width: an integer with a default value of 800. Represents window
+                width
+            - height: an integer with a default value of 600. Represents window
+                height
+            - caption: a string with the default value of 'New Pygame
+                Application', holds the title of the window
 
         Returns: None
         '''
@@ -67,6 +71,7 @@ class Engine():
         
         # Set the mouse position to the center of the window
         pygame.mouse.set_pos((self.lastX, self.lastY))
+
         # Lock the mouse to the window
         pygame.event.set_grab(True)
 
@@ -87,13 +92,12 @@ class Engine():
                 if event.type == pygame.MOUSEMOTION:
                     self.handle_mouse_movement(*event.rel)
                     
-            # Handle input
-            self.handle_input()
+            # Handle keyboard input
+            self.handle_keyboard_inp()
             
             # Draw the room
             self.draw_room(room_width, room_height, room_length)
 
-    # Method to close the game
     def close_game(self) -> None:
         '''
         Handles events that cause the game to close
@@ -105,8 +109,14 @@ class Engine():
         pygame.quit()
         exit()
 
-    # Method to handle input
-    def handle_input(self) -> None:
+    def handle_keyboard_inp(self) -> None:
+        '''
+        Handles certain input from the keyboard -> WASD for movement
+
+        Parameters: None
+
+        Returns: None
+        '''
         # Get the keys that are currently pressed
         keys = pygame.key.get_pressed()
         
@@ -130,8 +140,9 @@ class Engine():
                 self.camera_front[2] * self.camera_up[0] - self.camera_front[0] * self.camera_up[2],
                 self.camera_front[0] * self.camera_up[1] - self.camera_front[1] * self.camera_up[0]
             )
+
             # Normalize the right vector
-            norm = math.sqrt(sum(i**2 for i in cross_product))
+            norm = math.sqrt(sum(i * i for i in cross_product))
             right = tuple(i / norm for i in cross_product)
 
             # Apply movement
@@ -142,43 +153,54 @@ class Engine():
                 for i in range(3):
                     new_pos[i] += right[i] * camera_speed
 
-    # Check for collision with the new position before applying
+        # Check for collision with the new position before applying
         if not self.physics.check_collision(new_pos):
             self.camera_pos = tuple(new_pos)
 
-    # Method to handle mouse movement        
-    def handle_mouse_movement(self, xoffset, yoffset, sensitivity=0.05):
-            # If this is the first mouse movement, set the last position to the current position
-            if self.first_mouse:
-                self.lastX, self.lastY = pygame.mouse.get_pos()
-                self.first_mouse = False
+    def handle_mouse_movement(self, xoffset: float, yoffset: float,
+                              sensitivity: float = 0.05) -> None:
+        '''
+        Handles mouse movement, makes it look like you're looking around the
+        room.
 
-            # Calculate the offset of the mouse position
-            xoffset *= sensitivity
-            yoffset *= sensitivity * -1
+        Parameters:
+            - xoffset: a float representing the offset in the x-direction
+            - yoffset: a float representing the offset in the y-direction
+            - sensitivity: a float representing the mouse sensitivity
 
-            # Update the last position
-            self.yaw += xoffset
-            self.pitch += yoffset
+        Returns: None
+        '''
+        # If this is the first mouse movement, set the last position to the 
+        # current position
+        if self.first_mouse:
+            self.lastX, self.lastY = pygame.mouse.get_pos()
+            self.first_mouse = False
 
-            # Constrain the pitch
-            if self.pitch > 89.0:
-                self.pitch = 89.0
-            elif self.pitch < -89.0:
-                self.pitch = -89.0
+        # Calculate the offset of the mouse position
+        xoffset *= sensitivity
+        yoffset *= sensitivity * -1
 
-            # Update the camera front direction
-            direction = (
-                math.cos(math.radians(self.yaw)) * math.cos(math.radians(self.pitch)),
-                math.sin(math.radians(self.pitch)),
-                math.sin(math.radians(self.yaw)) * math.cos(math.radians(self.pitch))
-            )
+        # Update the last position
+        self.yaw += xoffset
+        self.pitch += yoffset
 
-            # Normalize the direction
-            norm = math.sqrt(sum(i**2 for i in direction))
-            self.camera_front = tuple(i / norm for i in direction)
+        # Constrain the pitch
+        if self.pitch > 89.0:
+            self.pitch = 89.0
+        elif self.pitch < -89.0:
+            self.pitch = -89.0
 
-    # Method to draw the room
+        # Update the camera front direction
+        direction = (
+            math.cos(math.radians(self.yaw)) * math.cos(math.radians(self.pitch)),
+            math.sin(math.radians(self.pitch)),
+            math.sin(math.radians(self.yaw)) * math.cos(math.radians(self.pitch))
+        )
+
+        # Normalize the direction
+        norm = math.sqrt(sum(i * i for i in direction))
+        self.camera_front = tuple(i / norm for i in direction)
+
     def draw_room(self, width: float, height: float, length: float) -> None:
         '''
         Draws a room on the screen
@@ -192,9 +214,11 @@ class Engine():
         '''
         # Enable depth testing
         glEnable(GL_DEPTH_TEST)
+
         # Clear buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
+
         # Set perspective
         gluPerspective(45, (self.window.width / self.window.height), 0.1, 100.0)
 
