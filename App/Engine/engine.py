@@ -14,6 +14,7 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
 from OpenGL.GLU import gluLookAt
+
 # class imports
 from .window import Window
 from .physics import Physics
@@ -29,21 +30,29 @@ class Engine():
         Returns: None
         '''
         pygame.init()
+
         self.window = None
-        self.camera_pos = [0.0, 0.0, 5.0]
-        self.camera_front = [0.0, 0.0, -1.0]
-        self.camera_up = [0.0, 1.0, 0.0]
-        self.yaw = -90.0  # yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right
+
+        self.camera_pos = (0.0, 0.0, 5.0)
+        self.camera_front = (0.0, 0.0, -1.0)
+        self.camera_up = (0.0, 1.0, 0.0)
+
+        # yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a
+        # direction vector pointing to the right
+        self.yaw = -90.0
+
         self.pitch = 0.0
-        self.lastX, self.lastY = 400, 300
+        self.lastX = 400
+        self.lastY = 300
         self.first_mouse = True
+
         pygame.mouse.set_visible(False)
         
-        self.room_size = [50, 10, 50]
+        self.room_size = (50, 10, 50)
         self.physics = Physics(self.room_size)
-        
 
-    def run(self, width: int=800, height: int=600, caption: str="New Pygame Application") -> None:
+    def run(self, width: int=800, height: int=600, 
+            caption: str="New Pygame Application") -> None:
         '''
         Runs the engine.
 
@@ -55,17 +64,17 @@ class Engine():
         pygame.mouse.set_pos((self.lastX, self.lastY))
         pygame.event.set_grab(True)
 
-        room_width = self.room_size[0]
-        room_height = self.room_size[1]
-        room_length = self.room_size[2]
+        room_width, room_height, room_length = self.room_size
         
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.close_game()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:  # Check if ESC key is pressed
-                        self.close_game()  # Call close_game to exit
+                    # Check if ESC key is pressed
+                    if event.key == pygame.K_ESCAPE:
+                        # Call close_game to exit
+                        self.close_game()
                 if event.type == pygame.MOUSEMOTION:
                     self.handle_mouse_movement(*event.rel)
                     
@@ -86,7 +95,9 @@ class Engine():
     def handle_input(self) -> None:
         keys = pygame.key.get_pressed()
         camera_speed = 0.005
-        new_pos = self.camera_pos[:]  # Copy of the camera position for testing potential movement
+
+        # Copy of the camera position for testing potential movement
+        new_pos = list(self.camera_pos)
 
         # Calculate potential new position based on input
         if keys[pygame.K_w]:
@@ -97,11 +108,14 @@ class Engine():
                 new_pos[i] -= self.camera_front[i] * camera_speed
         if keys[pygame.K_a] or keys[pygame.K_d]:
             # Calculate right vector
-            cross_product = [self.camera_front[1] * self.camera_up[2] - self.camera_front[2] * self.camera_up[1],
-                            self.camera_front[2] * self.camera_up[0] - self.camera_front[0] * self.camera_up[2],
-                            self.camera_front[0] * self.camera_up[1] - self.camera_front[1] * self.camera_up[0]]
+            cross_product = (
+                self.camera_front[1] * self.camera_up[2] - self.camera_front[2] * self.camera_up[1],
+                self.camera_front[2] * self.camera_up[0] - self.camera_front[0] * self.camera_up[2],
+                self.camera_front[0] * self.camera_up[1] - self.camera_front[1] * self.camera_up[0]
+            )
+
             norm = math.sqrt(sum(i**2 for i in cross_product))
-            right = [i / norm for i in cross_product]
+            right = tuple(i / norm for i in cross_product)
 
             # Apply movement
             if keys[pygame.K_a]:
@@ -112,8 +126,8 @@ class Engine():
                     new_pos[i] += right[i] * camera_speed
 
     # Check for collision with the new position before applying
-        if not self.physics.check_collision(new_pos, self.room_size):
-            self.camera_pos = new_pos
+        if not self.physics.check_collision(new_pos):
+            self.camera_pos = tuple(new_pos)
 
             
     def handle_mouse_movement(self, xoffset, yoffset, sensitivity=0.05):
@@ -129,16 +143,17 @@ class Engine():
 
             if self.pitch > 89.0:
                 self.pitch = 89.0
-            if self.pitch < -89.0:
+            elif self.pitch < -89.0:
                 self.pitch = -89.0
 
-            direction = [
-            math.cos(math.radians(self.yaw)) * math.cos(math.radians(self.pitch)),
-            math.sin(math.radians(self.pitch)),
-            math.sin(math.radians(self.yaw)) * math.cos(math.radians(self.pitch))
-        ]
+            direction = (
+                math.cos(math.radians(self.yaw)) * math.cos(math.radians(self.pitch)),
+                math.sin(math.radians(self.pitch)),
+                math.sin(math.radians(self.yaw)) * math.cos(math.radians(self.pitch))
+            )
+
             norm = math.sqrt(sum(i**2 for i in direction))
-            self.camera_front = [i / norm for i in direction]
+            self.camera_front = tuple(i / norm for i in direction)
 
     def draw_room(self, width: float, height: float, length: float) -> None:
         '''
@@ -155,7 +170,8 @@ class Engine():
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
         gluPerspective(45, (self.window.width / self.window.height), 0.1, 100.0)
-        eye = [self.camera_pos[i] + self.camera_front[i] for i in range(3)]
+
+        eye = tuple(self.camera_pos[i] + self.camera_front[i] for i in range(3))
         gluLookAt(self.camera_pos[0], self.camera_pos[1], self.camera_pos[2],
                   eye[0], eye[1], eye[2],
                   self.camera_up[0], self.camera_up[1], self.camera_up[2])

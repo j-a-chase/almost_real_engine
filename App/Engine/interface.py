@@ -7,4 +7,5 @@
 #
 ################################################################################
 
-if __name__ == '__main__': assert False, 'This is a class file. Import its contents into another file.'
+if __name__ == '__main__':
+    assert False, 'This is a class file. Import its contents into another file.'

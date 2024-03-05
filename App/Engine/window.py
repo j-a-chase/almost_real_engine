@@ -13,7 +13,8 @@ from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
 
 class Window():
-    def __init__(self, width: int=800, height: int=600, caption: str="New Pygame Application") -> None:
+    def __init__(self, width: int=800, height: int=600,
+                 caption: str="New Pygame Application") -> None:
         '''
         Constructor for Window class
 
@@ -23,7 +24,8 @@ class Window():
             - caption: string defaulting to 'New Pygame Application'
         '''
         pygame.init()
-        pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEBUF)
+        pygame.display.set_mode((width, height),
+                                pygame.OPENGL | pygame.DOUBLEBUF)
         pygame.display.set_caption(caption)
 
         self.width = width
