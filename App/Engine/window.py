@@ -43,10 +43,15 @@ class Window():
         '''
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glEnable(GL_DEPTH_TEST)
+
         glMatrixMode(GL_PROJECTION)
+        
         glLoadIdentity()
         gluPerspective(45, (self.width / self.height), 0.1, 10.0)
-        glTranslatef(0.0, 0.0, -3.0)  # Move back so we can see the prism
+
+        # Move back so we can see the prism
+        glTranslatef(0.0, 0.0, -3.0)
+
         glMatrixMode(GL_MODELVIEW)
 
 if __name__ == '__main__':

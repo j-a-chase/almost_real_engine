@@ -8,7 +8,7 @@
 ################################################################################
 
 # imports
-from typing import Tuple, List
+from typing import Tuple
 
 class Physics():
     def __init__(self, room_size: Tuple[int, int, int]) -> None:

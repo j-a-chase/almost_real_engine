@@ -10,7 +10,6 @@
 # module imports
 import pygame
 import math
-from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
 from OpenGL.GLU import gluLookAt
