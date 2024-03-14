@@ -111,6 +111,9 @@ class Engine():
             for obj in self.objects:
                 obj.draw()
 
+            # Update the display
+            pygame.display.flip()
+
     def close_game(self) -> None:
         '''
         Handles events that cause the game to close
@@ -284,7 +287,7 @@ class Engine():
         glVertex3f(-width/2, height/2, length/2)
         glEnd()
 
-        pygame.display.flip()
+        # pygame.display.flip()
         
         
     def create_object(self):

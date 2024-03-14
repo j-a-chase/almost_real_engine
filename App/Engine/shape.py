@@ -1,5 +1,6 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
+import pygame
 
 # Base Shape class
 class Shape:
@@ -21,7 +22,7 @@ class Shape:
 
 # Sphere class
 class Sphere(Shape):
-    def __init__(self, radius, color, position):
+    def __init__(self, radius, color=(1.0, 1.0, 1.0), position=(0.0, 0.0, 0.0)):
         super().__init__(color, position)
         self.radius = radius
 
@@ -30,9 +31,11 @@ class Sphere(Shape):
         quad = gluNewQuadric()
         gluSphere(quad, self.radius, 32, 32)
 
+        # pygame.display.flip()
+
 # Cube class
 class Cube(Shape):
-    def __init__(self, side_length, color, position):
+    def __init__(self, side_length, color=(1.0, 1.0, 1.0), position=(0.0, 0.0, 0.0)):
         super().__init__(color, position)
         self.side_length = side_length
 
@@ -78,6 +81,8 @@ class Cube(Shape):
         glVertex3f(side, -side, side)
         glEnd()
 
+        # pygame.display.flip()
+
 # Pyramid class (keeping the immediate mode for educational purposes)
 class Pyramid(Shape):
     def __init__(self, base=1.0, height=1.5, color=(1.0, 1.0, 1.0), position=(0.0, 0.0, 0.0)):
@@ -110,3 +115,5 @@ class Pyramid(Shape):
         glVertex3f(-self.base, self.base, 0)
         glVertex3f(-self.base, -self.base, 0)
         glEnd()
+
+        # pygame.display.flip()
