@@ -13,10 +13,13 @@ import math
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
 from OpenGL.GLU import gluLookAt
+import tkinter as tk
+from tkinter import simpledialog
 
 # class imports
 from .window import Window
 from .physics import Physics
+from .shape import Sphere, Cube, Pyramid
 
 
 class Engine():
@@ -50,6 +53,9 @@ class Engine():
         # Initialize physics
         self.room_size = (50, 10, 50)
         self.physics = Physics(self.room_size)
+        
+        # Initialize objects
+        self.objects = []
 
     def run(self, width: int=800, height: int=600, 
             caption: str="New Pygame Application") -> None:
@@ -87,7 +93,10 @@ class Engine():
                     # Check if ESC key is pressed
                     if event.key == pygame.K_ESCAPE:
                         # Call close_game to exit
-                        self.close_game()\
+                        self.close_game()
+                    if ((event.key == pygame.K_o) and (event.mod & pygame.KMOD_CTRL)):
+                        self.create_object()
+
                 # Check for mouse movement
                 if event.type == pygame.MOUSEMOTION:
                     self.handle_mouse_movement(*event.rel)
@@ -97,6 +106,10 @@ class Engine():
             
             # Draw the room
             self.draw_room(room_width, room_height, room_length)
+            
+            # Draw the objects
+            for obj in self.objects:
+                obj.draw()
 
     def close_game(self) -> None:
         '''
@@ -272,6 +285,44 @@ class Engine():
         glEnd()
 
         pygame.display.flip()
+        
+        
+    def create_object(self):
+        '''
+        Opens a Tkinter dialog to create a new object with user-defined properties.
+        '''
+        root = tk.Tk()
+        root.withdraw()  # We don't want a full GUI, so keep the root window from appearing
+
+        # Simple dialog to get the shape type
+        shape_type = simpledialog.askstring("Input", "Shape Type (Cube/Sphere/Pyramid):", parent=root)
+
+        # Ask for size, color, and position
+        size = simpledialog.askfloat("Input", "Size:", parent=root)
+        color = simpledialog.askstring("Input", "Color (R,G,B):", parent=root)
+        # Calculate the position in front of the camera
+        position = (
+            self.camera_pos[0] + self.camera_front[0] * (size + 1),
+            self.camera_pos[1] + self.camera_front[1] * (size + 1),
+            self.camera_pos[2] + self.camera_front[2] * (size + 1)
+        )
+
+        # Process color and position inputs
+        color = tuple(map(float, color.split(',')))
+
+        # Create the object based on the shape type
+        if shape_type.lower() == 'cube':
+            new_object = Cube(side_length=size, color=color, position=position)
+        elif shape_type.lower() == 'sphere':
+            new_object = Sphere(radius=size, color=color, position=position)
+        elif shape_type.lower() == 'pyramid':
+            new_object = Pyramid(base=size, height=size*1.5, color=color, position=position)
+        else:
+            print("Unknown shape type.")
+            return
+
+        self.objects.append(new_object)
+        print(f"New {shape_type} created!")
 
 if __name__ == '__main__':
     assert False, 'This is a class file. Import its contents into another file.'
