@@ -10,9 +10,10 @@
 # module imports
 import pygame
 import math
+from pygame.locals import *
 from OpenGL.GL import *
-from OpenGL.GLU import gluPerspective
-from OpenGL.GLU import gluLookAt
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
 import tkinter as tk
 from tkinter import simpledialog
 
@@ -32,8 +33,13 @@ class Engine():
         Returns: None
         '''
         pygame.init()
-
+        display = (800, 600)
+        pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
         self.window = None
+
+        # This is where you enable depth testing
+        glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LESS)
 
         # Initialize camera position, front direction, and up direction
         self.camera_pos = (0.0, 0.0, 5.0)
@@ -86,6 +92,10 @@ class Engine():
         
         # Main game loop
         while True:
+            
+            # Clear buffers
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.close_game()
@@ -100,7 +110,7 @@ class Engine():
                 # Check for mouse movement
                 if event.type == pygame.MOUSEMOTION:
                     self.handle_mouse_movement(*event.rel)
-                    
+             
             # Handle keyboard input
             self.handle_keyboard_inp()
             
@@ -228,11 +238,8 @@ class Engine():
 
         Returns: None
         '''
-        # Enable depth testing
-        glEnable(GL_DEPTH_TEST)
 
-        # Clear buffers
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        # Clear the screen
         glLoadIdentity()
 
         # Set perspective
@@ -286,8 +293,6 @@ class Engine():
         glVertex3f(width/2, height/2, length/2)
         glVertex3f(-width/2, height/2, length/2)
         glEnd()
-
-        # pygame.display.flip()
         
         
     def create_object(self):
