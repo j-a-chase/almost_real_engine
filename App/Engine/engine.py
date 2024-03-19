@@ -114,13 +114,25 @@ class Engine():
             # Handle keyboard input
             self.handle_keyboard_inp()
             
+            # Enable depth testing
+            glEnable(GL_DEPTH_TEST)
+            glDepthFunc(GL_LESS)
+            
+            # Disable depth mask and backface culling
+            glDepthMask(GL_FALSE)
+            glDisable(GL_CULL_FACE)
+            
             # Draw the room
             self.draw_room(room_width, room_height, room_length)
             
             # Draw the objects
             for obj in self.objects:
                 obj.draw()
-
+            
+            # Re-enable depth mask and backface culling
+            glDepthMask(GL_TRUE)
+            glEnable(GL_CULL_FACE)
+            
             # Update the display
             pygame.display.flip()
 
