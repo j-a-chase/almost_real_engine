@@ -20,7 +20,9 @@ from tkinter import simpledialog
 # class imports
 from .window import Window
 from .physics import Physics
-from .shape import Sphere, Cube, Pyramid
+from .cube import Cube
+from .sphere import Sphere
+from .pyramid import Pyramid
 
 
 class Engine():
@@ -307,9 +309,13 @@ class Engine():
         glEnd()
         
         
-    def create_object(self):
+    def create_object(self) -> None:
         '''
         Opens a Tkinter dialog to create a new object with user-defined properties.
+
+        Parameters: None
+
+        Returns: None
         '''
         root = tk.Tk()
         root.withdraw()  # We don't want a full GUI, so keep the root window from appearing
@@ -332,11 +338,11 @@ class Engine():
 
         # Create the object based on the shape type
         if shape_type.lower() == 'cube':
-            new_object = Cube(side_length=size, color=color, position=position)
+            new_object = Cube(size, color, position)
         elif shape_type.lower() == 'sphere':
-            new_object = Sphere(radius=size, color=color, position=position)
+            new_object = Sphere(size, color, position)
         elif shape_type.lower() == 'pyramid':
-            new_object = Pyramid(base=size, height=size*1.5, color=color, position=position)
+            new_object = Pyramid(size, color, position)
         else:
             print("Unknown shape type.")
             return
