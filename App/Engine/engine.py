@@ -106,7 +106,8 @@ class Engine():
                     if event.key == pygame.K_ESCAPE:
                         # Call close_game to exit
                         self.close_game()
-                    if ((event.key == pygame.K_o) and (event.mod & pygame.KMOD_CTRL)):
+                    if ((event.key == pygame.K_o)
+                        and (event.mod & pygame.KMOD_CTRL)):
                         self.create_object()
 
                 # Check for mouse movement
@@ -311,17 +312,23 @@ class Engine():
         
     def create_object(self) -> None:
         '''
-        Opens a Tkinter dialog to create a new object with user-defined properties.
+        Opens a Tkinter dialog to create a new object with user-defined
+        properties.
 
         Parameters: None
 
         Returns: None
         '''
+        # initialize root window
         root = tk.Tk()
-        root.withdraw()  # We don't want a full GUI, so keep the root window from appearing
+
+        # We don't want a full GUI, so keep the root window from appearing
+        root.withdraw()
 
         # Simple dialog to get the shape type
-        shape_type = simpledialog.askstring("Input", "Shape Type (Cube/Sphere/Pyramid):", parent=root)
+        shape_type = simpledialog.askstring(
+            "Input", "Shape Type (Cube/Sphere/Pyramid):", parent=root
+        )
 
         # Ask for size, color, and position
         size = simpledialog.askfloat("Input", "Size:", parent=root)
